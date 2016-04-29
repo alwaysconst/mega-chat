@@ -1,0 +1,117 @@
+
+<!DOCTYPE html>
+<html lang="ru">
+<head>
+    <meta http-equiv='Content-type' content='text/html; charset=UTF-8'>
+    <link rel="stylesheet" href="style.css">
+    <title>Loft School - Mega Chat</title>
+</head>
+<body>
+<div class="gl-block table">
+    <div class="table-cell">
+        <div class="login table">
+            <div class="table-cell">
+                <img id="myPhoto" class="avatar-img" src="images/no-photo.jpg">
+            </div>
+            <div class="table-cell" id="myName">Добро пожаловать!</div>
+        </div>
+        <ul class="menu" id="userList">
+            <li>
+            </li>
+        </ul>
+    </div>
+    <div class="table-cell">
+        <div id="people">
+            <div id="people-in">
+            </div>
+        </div>
+        <div id="search">
+            <form action="">
+                <input placeholder="Введите сообщение" type="text" id="messageText">
+                <button id="sendButton">Отправить</button>
+            </form>
+        </div>
+    </div>
+</div>
+
+<div id="windowContainer" class="window-container">
+</div>
+
+<div id="blocker"></div>
+
+<script type="text/x-handlebars-template" id="loginWindowTemplate">
+    <div id="loginWindow">
+        <div id="win-reviews">
+            <div id="win-reviews-head">
+                Авторизация
+            </div>
+            <div id="win-reviews-block">
+                <div id="win-reviews-form">
+                    <form>
+                        <div class="error-block"></div>
+                        <input placeholder="ФИО" type="text" id="fioField">
+                        <input placeholder="Ник" type="text" id="nickField">
+                        <button id="loginButton">Войти</button>
+                    </form>
+                </div>
+            </div>
+        </div>
+    </div>
+</script>
+
+<script type="text/x-handlebars-template" id="uploadWindowTemplate">
+    <div id="uploadWindow">
+        <div id="win-reviews">
+            <div id="win-reviews-head">
+                Загрузка фото
+            </div>
+            <div id="win-reviews-block">
+                <div id="win-reviews-form">
+                    <form>
+                        <div class="error-block"></div>
+                        <div id="photoUpload">перетащите сюда фото</div>
+                        <button id="uploadButton">Загрузить</button>
+                        <button id="uploadCancelButton">Отмена</button>
+                    </form>
+                </div>
+            </div>
+        </div>
+    </div>
+</script>
+
+<script id="roomsTemplate" type="text/x-handlebars-template">
+    <li>
+        <div>Комнаты ({{rooms.length}})</div>
+        <ul>
+            {{#each rooms}}
+            <li>{{this}}</li>
+            {{/each}}
+        </ul>
+    </li>
+</script>
+
+<script id="usersTemplate" type="text/x-handlebars-template">
+    <li>
+        <div>УЧАСТНИКИ ({{users.length}})</div>
+        <ul>
+            {{#each users}}
+            <li data-login="{{login}}">{{name}}</li>
+            {{/each}}
+        </ul>
+    </li>
+</script>
+
+<script id="messageTemplate" type="text/x-handlebars-template">
+    <div class="people">
+        <div class="table">
+            <div class="table-cell"><img src="{{photo}}" class="avatar-img" data-login="{{login}}"></div>
+            <div class="table-cell">
+                <div><b>{{name}}</b><span>{{time}}</span></div>
+                <div>{{body}}</div>
+            </div>
+        </div>
+    </div>
+</script>
+<script src="main.js"></script>
+</body>
+</html>
