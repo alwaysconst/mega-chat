@@ -1,6 +1,6 @@
 'use strict';
 
-let httpServer = require('http').createServer().listen(5000, '0.0.0.0', () => {
+let httpServer = require('http').createServer().listen(5000, 'localhost', () => {
         console.log(`Server started on ${httpServer.address().address}:${httpServer.address().port}`);
     }),
     EventEmitter = require('events'),
