@@ -1,75 +1,92 @@
-var ws = new WebSocket('ws://localhost:5000');
-ws.onerror = function(e) {
-    //соединение было закрыто
-    console.log(e);
-};
-ws.onopen = function() {
-    //соединение установлено
-    //отправить запрос о регистрации
-    if (!localStorage.getItem( 'token')){
+function hb(whatCompile, whereInsert, data) {
+    var source = whatCompile.innerHTML,
+        templateFn = Handlebars.compile(source),
+        template = templateFn({list: data});
+    whereInsert.innerHTML = template;
+}
+
+hb (loginWindowTemplate, windowContainer);
+
+loginButton.addEventListener('click', function (e) {
+    e.preventDefault();
+    var name = document.getElementById('fioField').value.trim(),
+        login = document.getElementById('nickField').value.trim(),
+        ws = new WebSocket('ws://localhost:5000');
+    session(ws, 'reg', {name: name, login: login});
+});
+
+function session(ws, op, data, token) {
+    ws.onopen = function() {
         this.send(JSON.stringify({
-            op: 'reg',
-            data: {
-                name: 'test',
-                login: 'test'
-            }
+            op: op,
+            token: token,
+            data: data
         }));
-    }
+    };
+    ws.onerror = function(e) {
+        console.log(e);
+    };
+    ws.onclose = function(e) {
+        console.log(e);
+    };
+    ws.onmessage = function(e) {
+        console.log(e.data);
+
+        var data = JSON.parse(e.data);
+
+        switch(data.op) {
+            case 'token':
+                reg(data);
+                break;
+            case 'error':
+                error(data);
+                break;
+            case 'user-enter':
+                userEnter(data);
+                break;
+            case 'user-out':
+                userOut(data);
+                break;
+            case 'message':
+                newMessage(data);
+                break;
+            case 'user-change-photo':
+                userChangePhoto(data);
+                break;
+        }
+    };
 };
-ws.onmessage = function(e) {
-    //пришло сообщение от сервер, надо его обработать
-    console.log(e.data);
 
-    var data = JSON.parse(e.data);
-
-    switch(data.op) {
-        case 'token':
-            regMes(data);
-            break;
-        case 'user-out':
-            userOutMes(data);
-            break;
-        case 'error':
-            errorMes(data);
-            break;
-        case 'message':
-            newMessage(data);
-            break;
-        case 'user-change-photo':
-            userChangePhotoMes(data);
-            break;
+    function reg (data) {
+        if (!localStorage.getItem( 'token')){
+            localStorage.setItem( 'token', JSON.stringify( data.token ) );
+        }
+        windowContainer.innerHTML = '';
+        hb (usersTemplate, userList, data.users);
+        console.log(data.users);
     }
-};
 
-function regMes (data) {
-    if (!localStorage.getItem( 'token')){
-        localStorage.setItem( 'token', JSON.stringify( data.token ) );
+    function error(data) {
+
     }
-}
 
-function userOutMes() {
+    function userEnter(data) {
+        hb (usersTemplate, userList, data);
+    }
 
-}
+    function userOut(data) {
 
-function errorMes() {
+    }
 
-}
+    function newMessage(data) {
 
-function newMessage() {
+    }
 
-}
+    function userChangePhoto(data) {
 
-function userChangePhotoMes() {
-
-}
+    }
 
 sendButton.addEventListener('click', function (e) {
-    console.log(localStorage.getItem( 'token' ))
-    ws.send(JSON.stringify({
-        op: 'message',
-        token: localStorage.getItem( 'token' ), //уникальный идентификатор, полученный при регистрации
-        data: {
-            body: 'Test message' //тело сообщения
-        }
-    }))
-})
+    e.preventDefault();
+    session(ws, 'message', {body: 'Test message'}, localStorage.getItem( 'token' ));
+});

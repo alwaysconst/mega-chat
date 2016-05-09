@@ -410,6 +410,8 @@ h2 {
     top: 0;
     left: 0;
     width: 100%;
+    /*height: 100%;*/
+    /*background: #ffffff;*/
     z-index: 1500;
 }
 
@@ -489,7 +491,6 @@ h2 {
 }
 
 #loginWindow, #uploadWindow {
-    /*top: -230px;*/
     top: 0;
     width: 500px;
     position: relative;
