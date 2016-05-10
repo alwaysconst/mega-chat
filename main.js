@@ -1,3 +1,6 @@
+var ws;
+var token;
+
 function hb(whatCompile, whereInsert, data) {
     var source = whatCompile.innerHTML,
         templateFn = Handlebars.compile(source),
@@ -5,19 +8,30 @@ function hb(whatCompile, whereInsert, data) {
     whereInsert.innerHTML = template;
 }
 
-hb (loginWindowTemplate, windowContainer);
 
-loginButton.addEventListener('click', function (e) {
+hb (loginWindowTemplate, windowContainer);
+document.addEventListener('click', function (e) {
     e.preventDefault();
-    var name = document.getElementById('fioField').value.trim(),
-        login = document.getElementById('nickField').value.trim(),
-        ws = new WebSocket('ws://localhost:5000');
-    session(ws, 'reg', {name: name, login: login});
+    switch(e.target.id) {
+        case 'loginButton':
+            var name = fioField.value.trim(),
+                login = nickField.value.trim();
+            connect();
+            send('reg', {name: name, login: login});
+            break;
+        case 'sendButton':
+            send2('message', {body: 'Test message'}, JSON.parse(localStorage.getItem( 'token' )));
+            break;
+    }
 });
 
-function session(ws, op, data, token) {
+function connect() {
+    return ws = new WebSocket('ws://localhost:5000');
+}
+function send(op, data, token) {
+    console.log(ws);
     ws.onopen = function() {
-        this.send(JSON.stringify({
+        ws.send(JSON.stringify({
             op: op,
             token: token,
             data: data
@@ -30,63 +44,67 @@ function session(ws, op, data, token) {
         console.log(e);
     };
     ws.onmessage = function(e) {
-        console.log(e.data);
+        console.log(e);
 
-        var data = JSON.parse(e.data);
+        var message = JSON.parse(e.data);
 
-        switch(data.op) {
+        switch(message.op) {
             case 'token':
-                reg(data);
+                reg(message, data);
                 break;
             case 'error':
-                error(data);
+                error(message);
                 break;
             case 'user-enter':
-                userEnter(data);
+                userEnter(message);
                 break;
             case 'user-out':
-                userOut(data);
+                userOut(message);
                 break;
             case 'message':
-                newMessage(data);
+                newMessage(message);
                 break;
             case 'user-change-photo':
-                userChangePhoto(data);
+                userChangePhoto(message);
                 break;
         }
-    };
-};
-
-    function reg (data) {
-        if (!localStorage.getItem( 'token')){
-            localStorage.setItem( 'token', JSON.stringify( data.token ) );
-        }
-        windowContainer.innerHTML = '';
-        hb (usersTemplate, userList, data.users);
-        console.log(data.users);
     }
+}
 
-    function error(data) {
+function send2(op, data, token) {
+    ws.send(JSON.stringify({
+        op: op,
+        token: token,
+        data: data
+    }));
+}
 
-    }
+function reg (message, data) {
+    windowContainer.innerHTML = '';
 
-    function userEnter(data) {
-        hb (usersTemplate, userList, data);
-    }
+    hb (usersTemplate, userList, data.users);
+    console.log(data);
+    myName.innerHTML = data.login;
 
-    function userOut(data) {
+    return token = message.token;
+}
 
-    }
+function error(message) {
 
-    function newMessage(data) {
+}
 
-    }
+function userEnter(message) {
+    hb (usersTemplate, userList, message);
+}
 
-    function userChangePhoto(data) {
+function userOut(message) {
 
-    }
+}
 
-sendButton.addEventListener('click', function (e) {
-    e.preventDefault();
-    session(ws, 'message', {body: 'Test message'}, localStorage.getItem( 'token' ));
-});
+function newMessage(message) {
+
+}
+
+function userChangePhoto(message) {
+
+}
