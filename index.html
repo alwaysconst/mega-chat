@@ -90,15 +90,17 @@
 </script>
 
 <script id="messageTemplate" type="text/x-handlebars-template">
+    {{#each users}}
     <div class="people">
         <div class="table">
-            <div class="table-cell"><img src="{{photo}}" class="avatar-img" data-login="{{login}}"></div>
+            <div class="table-cell"><img src="http://localhost:5000/photos/{{user.login}}" class="avatar-img" data-login="{{user.login}}"></div>
             <div class="table-cell">
-                <div><b>{{name}}</b><span>{{time}}</span></div>
+                <div><b>{{user.name}}</b><span>{{time}}</span></div>
                 <div>{{body}}</div>
             </div>
         </div>
     </div>
+    {{/each}}
 </script>
 <script src="https://cdnjs.cloudflare.com/ajax/libs/handlebars.js/4.0.5/handlebars.min.js" type="text/javascript"></script>
 <script src="main.js"></script>

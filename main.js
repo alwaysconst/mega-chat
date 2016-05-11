@@ -1,10 +1,12 @@
-var ws;
-var token;
+var host = 'localhost:5000',
+    ws,
+    token;
 
 function hb(whatCompile, whereInsert, data) {
+    console.log(data);
     var source = whatCompile.innerHTML,
         templateFn = Handlebars.compile(source),
-        template = templateFn({list: data});
+        template = templateFn(data);
     whereInsert.innerHTML = template;
 }
 
@@ -20,16 +22,17 @@ document.addEventListener('click', function (e) {
             send('reg', {name: name, login: login});
             break;
         case 'sendButton':
-            send2('message', {body: 'Test message'}, JSON.parse(localStorage.getItem( 'token' )));
+            var messageText = document.getElementById('messageText').value.trim();
+            send2('message', {body: messageText}, token);
+            document.getElementById('messageText').value = '';
             break;
     }
 });
 
 function connect() {
-    return ws = new WebSocket('ws://localhost:5000');
+    return ws = new WebSocket('ws://' + host);
 }
 function send(op, data, token) {
-    console.log(ws);
     ws.onopen = function() {
         ws.send(JSON.stringify({
             op: op,
@@ -38,13 +41,12 @@ function send(op, data, token) {
         }));
     };
     ws.onerror = function(e) {
-        console.log(e);
+        error(message);
     };
     ws.onclose = function(e) {
         console.log(e);
     };
     ws.onmessage = function(e) {
-        console.log(e);
 
         var message = JSON.parse(e.data);
 
@@ -80,17 +82,21 @@ function send2(op, data, token) {
 }
 
 function reg (message, data) {
+    blocker.outerHTML = '';
     windowContainer.innerHTML = '';
 
-    hb (usersTemplate, userList, data.users);
-    console.log(data);
+    console.log(JSON.stringify(message));
+    console.log(message.messages);
     myName.innerHTML = data.login;
+
+    hb (usersTemplate, userList, {users: message.users});
+    hb (messageTemplate, people, {users: message.messages});
 
     return token = message.token;
 }
 
 function error(message) {
-
+    alert(message.error.message);
 }
 
 function userEnter(message) {
