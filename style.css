@@ -156,7 +156,7 @@ h2 {
 }
 
 #people {
-    /*min-height: 0;*/
+    min-height: 0;
     height: 90%;
     top:0;
     bottom: 0;

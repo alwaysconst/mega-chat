@@ -1,15 +1,7 @@
 var host = 'localhost:5000',
     ws,
-    token;
-
-function hb(whatCompile, whereInsert, data) {
-    console.log(data);
-    var source = whatCompile.innerHTML,
-        templateFn = Handlebars.compile(source),
-        template = templateFn(data);
-    whereInsert.innerHTML = template;
-}
-
+    token,
+    users;
 
 hb (loginWindowTemplate, windowContainer);
 document.addEventListener('click', function (e) {
@@ -26,6 +18,15 @@ document.addEventListener('click', function (e) {
             send2('message', {body: messageText}, token);
             document.getElementById('messageText').value = '';
             break;
+        case 'myPhoto':
+            hb (uploadWindowTemplate, windowContainer);
+            break;
+        case 'uploadCancelButton':
+            clearDOM(windowContainer);
+            break;
+        case 'uploadButton':
+            uploadPhoto();
+            break
     }
 });
 
@@ -83,34 +84,77 @@ function send2(op, data, token) {
 
 function reg (message, data) {
     blocker.outerHTML = '';
-    windowContainer.innerHTML = '';
+    clearDOM (windowContainer);
 
-    console.log(JSON.stringify(message));
-    console.log(message.messages);
     myName.innerHTML = data.login;
+    myPhoto.src = 'http://' + host + '/photos/' + data.login;
+    users = message.users;
 
-    hb (usersTemplate, userList, {users: message.users});
-    hb (messageTemplate, people, {users: message.messages});
+    hb (usersTemplate, userList, {users: users});
+    message.messages.forEach(function (item){
+        item.time = time(item.time);
+        hb (messageTemplate, people, item);
+    });
+    people.scrollTop = 9999;
 
     return token = message.token;
 }
 
-function error(message) {
+function error (message) {
     alert(message.error.message);
 }
 
-function userEnter(message) {
-    hb (usersTemplate, userList, message);
+function userEnter (message) {
+    users.push(message.user);
+    clearDOM (userList);
+    hb (usersTemplate, userList, {users: users});
 }
 
-function userOut(message) {
-
+function userOut (message) {
+    users.forEach(function(user) {
+       if(user.login === message.user.login) {
+           var whoOut = users.splice(users.indexOf(user), 1);
+       }
+    });
+    clearDOM (userList);
+    hb (usersTemplate, userList, {users: users});
 }
 
-function newMessage(message) {
-
+function newMessage (message) {
+    hb (messageTemplate, people, message);
+    people.scrollTop = 9999;
 }
 
-function userChangePhoto(message) {
+function userChangePhoto (message) {
+    console.log(message);
+}
 
+function uploadPhoto () {
+    var data = new FormData();
+    data.append('photo', e.dataTransfer.files[0]);
+    data.append('token', token);
+
+    var xhr = new XMLHttpRequest();
+    xhr.open('post', 'http://' + host + '/upload', true);
+    xhr.send(data);
+}
+
+function time (date) {
+    date = new Date(date);
+    return date.getHours() + ':' + date.getMinutes();
+}
+
+function hb(whatCompile, whereInsert, data) {
+    var source = whatCompile.innerHTML,
+        templateFn = Handlebars.compile(source),
+        template = templateFn(data);
+    var parser = new DOMParser();
+    var doc = parser.parseFromString(template, "text/html");
+    var temp = document.createElement('div');
+    temp.innerHTML = template;
+    whereInsert.appendChild(temp);
+}
+
+function clearDOM (whatClear) {
+    whatClear.innerHTML = '';
 }
