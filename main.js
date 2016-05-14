@@ -1,80 +1,74 @@
 var host = 'localhost:5000',
     ws,
     token,
-    users;
+    users,
+    login,
+    photo;
 
-hb (loginWindowTemplate, windowContainer);
+view (loginWindowTemplate, windowContainer);
 document.addEventListener('click', function (e) {
     e.preventDefault();
     switch(e.target.id) {
         case 'loginButton':
-            var name = fioField.value.trim(),
-                login = nickField.value.trim();
-            connect();
-            send('reg', {name: name, login: login});
+            loginButtonFn(e);
             break;
         case 'sendButton':
-            var messageText = document.getElementById('messageText').value.trim();
-            send2('message', {body: messageText}, token);
-            document.getElementById('messageText').value = '';
+            sendButtonFn(e);
             break;
         case 'myPhoto':
-            hb (uploadWindowTemplate, windowContainer);
+            myPhotoFn(e);
             break;
         case 'uploadCancelButton':
-            clearDOM(windowContainer);
+            uploadCancelButtonFn(e);
             break;
         case 'uploadButton':
-            uploadPhoto();
+            uploadButtonFn(e);
             break
     }
 });
 
-function connect() {
-    return ws = new WebSocket('ws://' + host);
+function connect(op, data, token) {
+    new Promise(function (resolve) {
+        ws = new WebSocket('ws://' + host);
+        resolve (ws);
+    }).then(function(ws) {
+        ws.onopen = function() {
+            send(op, data, token, ws)
+        };
+        ws.onerror = function(e) {
+            console.log(e);
+        };
+        ws.onclose = function(e) {
+            console.log(e);
+        };
+        ws.onmessage = function(e) {
+            var message = JSON.parse(e.data);
+
+            switch(message.op) {
+                case 'token':
+                    regMs(message, data);
+                    break;
+                case 'error':
+                    errorMs(message);
+                    break;
+                case 'user-enter':
+                    userEnterMs(message);
+                    break;
+                case 'user-out':
+                    userOutMs(message);
+                    break;
+                case 'message':
+                    newMessageMs(message);
+                    break;
+                case 'user-change-photo':
+                    userChangePhotoMs(message);
+                    break;
+            }
+        };
+    })
 }
+
 function send(op, data, token) {
-    ws.onopen = function() {
-        ws.send(JSON.stringify({
-            op: op,
-            token: token,
-            data: data
-        }));
-    };
-    ws.onerror = function(e) {
-        error(message);
-    };
-    ws.onclose = function(e) {
-        console.log(e);
-    };
-    ws.onmessage = function(e) {
-
-        var message = JSON.parse(e.data);
-
-        switch(message.op) {
-            case 'token':
-                reg(message, data);
-                break;
-            case 'error':
-                error(message);
-                break;
-            case 'user-enter':
-                userEnter(message);
-                break;
-            case 'user-out':
-                userOut(message);
-                break;
-            case 'message':
-                newMessage(message);
-                break;
-            case 'user-change-photo':
-                userChangePhoto(message);
-                break;
-        }
-    }
-}
-
-function send2(op, data, token) {
     ws.send(JSON.stringify({
         op: op,
         token: token,
@@ -82,61 +76,143 @@ function send2(op, data, token) {
     }));
 }
 
-function reg (message, data) {
-    blocker.outerHTML = '';
-    clearDOM (windowContainer);
+function regMs (message, data) {
+    clearNode (windowContainer);
+    windowContainer.classList.toggle("hide");
 
-    myName.innerHTML = data.login;
-    myPhoto.src = 'http://' + host + '/photos/' + data.login;
+    myName.innerHTML = data.name;
+    myPhoto.src = 'http://' + host + '/photos/' + login;
     users = message.users;
 
-    hb (usersTemplate, userList, {users: users});
+    view (usersTemplate, userList, {users: users});
     message.messages.forEach(function (item){
         item.time = time(item.time);
-        hb (messageTemplate, people, item);
+        view (messageTemplate, people, item);
     });
     people.scrollTop = 9999;
 
     return token = message.token;
 }
 
-function error (message) {
-    alert(message.error.message);
+function errorMs (message) {
+    evTarget.parentNode.querySelector('.error-block').innerText = message.error.message;
 }
 
-function userEnter (message) {
+function userEnterMs (message) {
     users.push(message.user);
-    clearDOM (userList);
-    hb (usersTemplate, userList, {users: users});
+    clearNode (userList);
+    view (usersTemplate, userList, {users: users});
 }
 
-function userOut (message) {
+function userOutMs (message) {
     users.forEach(function(user) {
        if(user.login === message.user.login) {
            var whoOut = users.splice(users.indexOf(user), 1);
        }
     });
-    clearDOM (userList);
-    hb (usersTemplate, userList, {users: users});
+    clearNode (userList);
+    view (usersTemplate, userList, {users: users});
 }
 
-function newMessage (message) {
-    hb (messageTemplate, people, message);
+function newMessageMs (message) {
+    message.time = time(message.time);
+    view (messageTemplate, people, message);
     people.scrollTop = 9999;
 }
 
-function userChangePhoto (message) {
-    console.log(message);
+function userChangePhotoMs (message) {
+    var newPhoto = 'http://' + host + '/photos/' + message.user.login + '?' + Date.now();
+
+    if (message.user.login === login) {
+        myPhoto.src = newPhoto;
+    }
+
+    Array.from(document.querySelectorAll('.avatar-img[data-login="' + message.user.login + '"]')).forEach(function(elem) {
+        elem.src = newPhoto;
+    });
 }
 
-function uploadPhoto () {
-    var data = new FormData();
-    data.append('photo', e.dataTransfer.files[0]);
-    data.append('token', token);
+function loginButtonFn (e) {
+    var name = fioField.value.trim();
+    login = nickField.value.trim();
+    connect('reg', {name: name, login: login});
+    // send('reg', {name: name, login: login});
+    return evTarget = e.target;
+}
 
-    var xhr = new XMLHttpRequest();
-    xhr.open('post', 'http://' + host + '/upload', true);
-    xhr.send(data);
+function sendButtonFn (e) {
+    var messageText = document.getElementById('messageText').value.trim();
+    if (messageText > null) {
+        document.getElementById('messageText').value = '';
+        e.target.parentNode.querySelector('.error-block').innerText = '';
+    }
+    send('message', {body: messageText}, token);
+    return evTarget = e.target;
+}
+
+function myPhotoFn (e) {
+    view (uploadWindowTemplate, windowContainer);
+    windowContainer.classList.toggle("hide");
+
+    var uploadArea = document.getElementById("photoUpload"),
+        avatar = 'http://' + host + '/photos/' + login + '?' + Date.now();
+    photo = null;
+
+    photoUpload.style.backgroundImage = 'url(' + avatar + ')';
+    // photoUpload.innerText = '';
+
+    uploadArea.ondragover = function (e) {
+        e.preventDefault();
+    };
+
+    uploadArea.ondrop  = function (e) {
+        e.preventDefault();
+        e.stopPropagation();
+
+        var file = e.dataTransfer.files[0];
+
+        readFile(file).then(function (data) {
+            photoUpload.style.backgroundImage = 'url(' + data + ')';
+            photoUpload.innerText = '';
+            photo = file;
+        });
+    };
+
+
+    function readFile (file) {
+        return new Promise(function (resolve) {
+            var reader = new FileReader();
+
+            reader.onload = function () {
+                return resolve(reader.result)
+            };
+
+            reader.readAsDataURL(file);
+        })
+    }
+}
+function uploadCancelButtonFn (e) {
+    windowContainer.classList.toggle("hide");
+    clearNode(windowContainer);
+}
+
+function uploadButtonFn (e) {
+    if (photo) {
+        var formData = new FormData();
+        formData.append('photo', photo);
+        formData.append('token', token);
+        var xhr = new XMLHttpRequest();
+
+        xhr.responseType = 'json';
+        xhr.open('post', 'http://' + host + '/upload', true);
+        xhr.send(formData);
+
+        windowContainer.classList.toggle("hide");
+        clearNode(windowContainer);
+    } else {
+        e.target.parentNode.querySelector('.error-block').innerText = 'Не выбран файл';
+    }
+    return evTarget = e.target;
 }
 
 function time (date) {
@@ -144,7 +220,7 @@ function time (date) {
     return date.getHours() + ':' + date.getMinutes();
 }
 
-function hb(whatCompile, whereInsert, data) {
+function view(whatCompile, whereInsert, data) {
     var source = whatCompile.innerHTML,
         templateFn = Handlebars.compile(source),
         template = templateFn(data);
@@ -155,6 +231,6 @@ function hb(whatCompile, whereInsert, data) {
     whereInsert.appendChild(temp);
 }
 
-function clearDOM (whatClear) {
-    whatClear.innerHTML = '';
+function clearNode (node) {
+    node.innerHTML = '';
 }

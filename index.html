@@ -15,8 +15,6 @@
             <div class="table-cell" id="myName">Добро пожаловать!</div>
         </div>
         <ul class="menu" id="userList">
-            <li>
-            </li>
         </ul>
     </div>
     <div class="table-cell">
@@ -26,6 +24,7 @@
         </div>
         <div id="search">
             <form action="">
+                <div class="error-block"></div>
                 <input placeholder="Введите сообщение" type="text" id="messageText">
                 <button id="sendButton">Отправить</button>
             </form>
@@ -35,8 +34,6 @@
 
 <div id="windowContainer" class="window-container">
 </div>
-
-<div id="blocker"></div>
 
 <script type="text/x-handlebars-template" id="loginWindowTemplate">
     <div id="loginWindow">

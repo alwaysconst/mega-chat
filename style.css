@@ -142,23 +142,10 @@ h2 {
     margin-left: 18px;
 }
 
-#add-room div {
-    color: #fee6de;
-    margin-bottom: 23px;
-    border-bottom: 1px dashed #fee6de;
-    display: inline-block;
-    line-height: 17px;
-}
-
-#add-room div:hover {
-    border-bottom: 1px solid transparent;
-    cursor: pointer;
-}
-
 #people {
     min-height: 0;
-    height: 90%;
-    top:0;
+    max-height: 90%;
+    /*top:0;*/
     bottom: 0;
     margin: auto;
     overflow: auto;
@@ -212,9 +199,7 @@ h2 {
     line-height: 12px;
     color: #fff;
     border: 0;
-    position: absolute;
-    top: 0;
-    right: 0;
+    float: right;
 }
 
 .gl-block > .table-cell:last-child .menu li ul li {
@@ -272,83 +257,6 @@ h2 {
     width: 100%;
 }
 
-.win-friends-block {
-    height: 185px;
-    overflow: auto;
-}
-
-.win-friends-block-el, .win-friends-block-el .table-cell {
-    height: 59px;
-    font-size: 12px;
-    line-height: 14px;
-    font-weight: 400;
-}
-
-.win-friends-block-el .table-cell:first-child {
-    width: 58px;
-    text-align: center;
-}
-
-.win-friends-block-el .table-cell:first-child img {
-    width: 45px;
-}
-
-.win-friends-block-el .table-cell:last-child {
-    width: 22px;
-    text-align: center;
-}
-
-.add {
-    width: 16px;
-    height: 16px;
-    background: url("images/add.png") no-repeat;
-    cursor: pointer;
-}
-
-.win-friends-block-el {
-    border-bottom: 1px solid #f0f0f0;
-}
-
-.win-friends-block-el:hover {
-    background: #f0f0f0;
-}
-
-.win-friends-block-el img {
-    border-radius: 50%;
-    margin-top: 5px;
-}
-
-.remove {
-    width: 14px;
-    height: 14px;
-    background: url("images/remove.png") no-repeat;
-    cursor: pointer;
-}
-
-.win-friends-form {
-    height: 28px;
-    border-bottom: 1px solid #f0f0f0;
-}
-
-.win-friends-form div {
-    background: #fff url("images/search.png") no-repeat;
-    padding-left: 20px;
-}
-
-.win-friends-form div input {
-    border: 0;
-    background: none;
-    width: 94%;
-    font-size: 14px;
-    line-height: 14px;
-    font-family: 'FiraSans', sans-serif;
-    font-weight: 300;
-}
-
-.win-friends-block-add {
-    margin-top: 10px;
-}
-
 #win-reviews-form {
     /*border-top: 1px solid #f0f0f0;
     margin-top: 30px;
@@ -399,21 +307,13 @@ h2 {
 }
 
 .window-container {
-    /*position: fixed;
-    top: 0;
-    left: 0;
-    right: 0;
-    bottom: 0;
-    width: 100%;
-    height: 100%;*/
-
     position: fixed;
     top: 0;
     left: 0;
     right: 0;
-    /*width: 100%;*/
-    /*height: 100%;*/
-    /*background: #ffffff;*/
+    width: 100%;
+    height: 100%;
+    background: rgba(255, 255, 255, 0.7);
     z-index: 1500;
 }
 
@@ -432,76 +332,63 @@ h2 {
     background-size: 100%;
 }
 
-#blocker {
-    position: fixed;
-    z-index: 1000;
-    top: 0;
-    /*bottom: 0;*/
-    left: 0;
-    /*right: 0;*/
-    width: 100%;
-    height: 100%;
-    background: rgba(255, 255, 255, 0.7);
-    /*display: none;*/
+.hide {
+    display: none;
 }
 
-.blur {
-    -webkit-animation: blur 0.5s linear forwards;
-    -moz-animation: blur 0.5s linear forwards;
-    -ms-animation: blur 0.5s linear forwards;
-    -o-animation: blur 0.5s linear forwards;
-    animation: blur 0.5s linear forwards;
-}
+/*.blur {*/
+    /*-webkit-animation: blur 0.5s linear forwards;*/
+    /*-moz-animation: blur 0.5s linear forwards;*/
+    /*-ms-animation: blur 0.5s linear forwards;*/
+    /*-o-animation: blur 0.5s linear forwards;*/
+    /*animation: blur 0.5s linear forwards;*/
+/*}*/
 
-@-webkit-keyframes blur {
-    to {
-        -webkit-filter: blur(2px);
-        filter: blur(2px);
-    }
-}
+/*@-webkit-keyframes blur {*/
+    /*to {*/
+        /*-webkit-filter: blur(2px);*/
+        /*filter: blur(2px);*/
+    /*}*/
+/*}*/
 
-@-moz-keyframes blur {
-    to {
-        -moz-filter: blur(2px);
-        filter: blur(2px);
-    }
-}
+/*@-moz-keyframes blur {*/
+    /*to {*/
+        /*-moz-filter: blur(2px);*/
+        /*filter: blur(2px);*/
+    /*}*/
+/*}*/
 
-@keyframes blur {
-    to {
-        -webkit-filter: blur(2px);
-        -moz-filter: blur(2px);
-        filter: blur(2px);
-    }
-}
+/*@keyframes blur {*/
+    /*to {*/
+        /*-webkit-filter: blur(2px);*/
+        /*-moz-filter: blur(2px);*/
+        /*filter: blur(2px);*/
+    /*}*/
+/*}*/
 
-.anim {
-    -webkit-transition: all 500ms cubic-bezier(0.680, 0, 0.265, 1); /* older webkit */
-    -webkit-transition: all 500ms cubic-bezier(0.680, -0.550, 0.265, 1.550);
-    -moz-transition: all 500ms cubic-bezier(0.680, -0.550, 0.265, 1.550);
-    -o-transition: all 500ms cubic-bezier(0.680, -0.550, 0.265, 1.550);
-    transition: all 500ms cubic-bezier(0.680, -0.550, 0.265, 1.550); /* easeInOutBack */
+/*.anim {*/
+    /*-webkit-transition: all 500ms cubic-bezier(0.680, 0, 0.265, 1); !* older webkit *!*/
+    /*-webkit-transition: all 500ms cubic-bezier(0.680, -0.550, 0.265, 1.550);*/
+    /*-moz-transition: all 500ms cubic-bezier(0.680, -0.550, 0.265, 1.550);*/
+    /*-o-transition: all 500ms cubic-bezier(0.680, -0.550, 0.265, 1.550);*/
+    /*transition: all 500ms cubic-bezier(0.680, -0.550, 0.265, 1.550); !* easeInOutBack *!*/
 
-    -webkit-transition-timing-function: cubic-bezier(0.680, 0, 0.265, 1); /* older webkit */
-    -webkit-transition-timing-function: cubic-bezier(0.680, -0.550, 0.265, 1.550);
-    -moz-transition-timing-function: cubic-bezier(0.680, -0.550, 0.265, 1.550);
-    -o-transition-timing-function: cubic-bezier(0.680, -0.550, 0.265, 1.550);
-    transition-timing-function: cubic-bezier(0.680, -0.550, 0.265, 1.550); /* easeInOutBack */
-}
+    /*-webkit-transition-timing-function: cubic-bezier(0.680, 0, 0.265, 1); !* older webkit *!*/
+    /*-webkit-transition-timing-function: cubic-bezier(0.680, -0.550, 0.265, 1.550);*/
+    /*-moz-transition-timing-function: cubic-bezier(0.680, -0.550, 0.265, 1.550);*/
+    /*-o-transition-timing-function: cubic-bezier(0.680, -0.550, 0.265, 1.550);*/
+    /*transition-timing-function: cubic-bezier(0.680, -0.550, 0.265, 1.550); !* easeInOutBack *!*/
+/*}*/
 
-.top0 {
-    top: 0 !important;
-}
+/*.top0 {*/
+    /*top: 0 !important;*/
+/*}*/
 
 #loginWindow, #uploadWindow {
     top: 0;
     width: 500px;
     position: relative;
     margin: 0 auto;
-}
-
-#roomList li {
-    cursor: pointer;
 }
 
 #myPhoto {
