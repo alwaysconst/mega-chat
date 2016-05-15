@@ -12,7 +12,7 @@ Then, change directory:
 cd mega-chat
 ```
 
-Then, to start using it you need:
+Then, to start using it you need:<br>
 1. initialize and start the server <br>
 2. initialize and start the chat
 ###1. Initialize and start the server
