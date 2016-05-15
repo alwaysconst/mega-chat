@@ -13,8 +13,8 @@ cd mega-chat
 ```
 
 Then, to start using it you need:
-1. initialize and start the server
-1. initialize and start the chat
+1. initialize and start the server <br>
+2. initialize and start the chat
 ###1. Initialize and start the server
 ```
 cd server && npm i && npm start
