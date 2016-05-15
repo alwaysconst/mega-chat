@@ -33,7 +33,7 @@ function connect(op, data, token) {
         resolve (ws);
     }).then(function(ws) {
         ws.onopen = function() {
-            send(op, data, token, ws)
+            send(op, data, token)
         };
         ws.onerror = function(e) {
             console.log(e);
@@ -77,25 +77,29 @@ function send(op, data, token) {
 }
 
 function regMs (message, data) {
-    clearNode (windowContainer);
     windowContainer.classList.toggle("hide");
+    clearNode (windowContainer);
 
     myName.innerHTML = data.name;
-    myPhoto.src = 'http://' + host + '/photos/' + login;
+    myPhoto.src = 'http://' + host + '/photos/' + login + '?' + Date.now();
     users = message.users;
 
     view (usersTemplate, userList, {users: users});
     message.messages.forEach(function (item){
         item.time = time(item.time);
-        view (messageTemplate, people, item);
+        view (messageTemplate, comments, item);
     });
-    people.scrollTop = 9999;
+    comments.scrollTop = 9999;
 
     return token = message.token;
 }
 
 function errorMs (message) {
     evTarget.parentNode.querySelector('.error-block').innerText = message.error.message;
+    function timer () {
+        evTarget.parentNode.querySelector('.error-block').innerText = '';
+    }
+    setTimeout(timer, 5000)
 }
 
 function userEnterMs (message) {
@@ -116,8 +120,8 @@ function userOutMs (message) {
 
 function newMessageMs (message) {
     message.time = time(message.time);
-    view (messageTemplate, people, message);
-    people.scrollTop = 9999;
+    view (messageTemplate, comments, message);
+    comments.scrollTop = 9999;
 }
 
 function userChangePhotoMs (message) {
@@ -136,7 +140,6 @@ function loginButtonFn (e) {
     var name = fioField.value.trim();
     login = nickField.value.trim();
     connect('reg', {name: name, login: login});
-    // send('reg', {name: name, login: login});
     return evTarget = e.target;
 }
 
@@ -159,7 +162,6 @@ function myPhotoFn (e) {
     photo = null;
 
     photoUpload.style.backgroundImage = 'url(' + avatar + ')';
-    // photoUpload.innerText = '';
 
     uploadArea.ondragover = function (e) {
         e.preventDefault();
@@ -169,50 +171,61 @@ function myPhotoFn (e) {
         e.preventDefault();
         e.stopPropagation();
 
-        var file = e.dataTransfer.files[0];
+        var file = e.dataTransfer.files[0],
+            fileSize = file.size / 1024,
+            maxSize = 512;
 
-        readFile(file).then(function (data) {
-            photoUpload.style.backgroundImage = 'url(' + data + ')';
-            photoUpload.innerText = '';
-            photo = file;
-        });
+        if (file.type != 'image/jpeg') {
+            evTarget = e.target;
+            errorMs ({error: {message:'Можно загружать только JPG-файлы'}});
+        } else if (fileSize > maxSize) {
+            evTarget = e.target;
+            errorMs ({error: {message:'Макисимальный размер файла 512Kb'}});
+        } else {
+            readFile(file).then(function (data) {
+                photoUpload.style.backgroundImage = 'url(' + data + ')';
+                photoUpload.innerText = '';
+                photo = file;
+            });
+        }
     };
-
-
-    function readFile (file) {
-        return new Promise(function (resolve) {
-            var reader = new FileReader();
-
-            reader.onload = function () {
-                return resolve(reader.result)
-            };
-
-            reader.readAsDataURL(file);
-        })
-    }
 }
+
 function uploadCancelButtonFn (e) {
     windowContainer.classList.toggle("hide");
     clearNode(windowContainer);
 }
 
 function uploadButtonFn (e) {
-    if (photo) {
+    if (!photo) {
+        evTarget = e.target;
+        errorMs ({error: {message:'Не выбран файл'}});
+    } else {
         var formData = new FormData();
         formData.append('photo', photo);
         formData.append('token', token);
-        var xhr = new XMLHttpRequest();
 
+        var xhr = new XMLHttpRequest();
         xhr.responseType = 'json';
         xhr.open('post', 'http://' + host + '/upload', true);
-        xhr.send(formData);
 
+        xhr.send(formData);
         windowContainer.classList.toggle("hide");
         clearNode(windowContainer);
-    } else {
-        e.target.parentNode.querySelector('.error-block').innerText = 'Не выбран файл';
     }
     return evTarget = e.target;
+}
+
+function readFile (file) {
+    return new Promise(function (resolve) {
+        var reader = new FileReader();
+
+        reader.onload = function () {
+            return resolve(reader.result)
+        };
+
+        reader.readAsDataURL(file);
+    })
 }
 
 function time (date) {
@@ -223,12 +236,11 @@ function time (date) {
 function view(whatCompile, whereInsert, data) {
     var source = whatCompile.innerHTML,
         templateFn = Handlebars.compile(source),
-        template = templateFn(data);
-    var parser = new DOMParser();
-    var doc = parser.parseFromString(template, "text/html");
-    var temp = document.createElement('div');
-    temp.innerHTML = template;
-    whereInsert.appendChild(temp);
+        template = templateFn(data),
+        parser = new DOMParser(),
+        dom = parser.parseFromString(template, "text/html"),
+        elems = dom.querySelector('body').firstElementChild;
+    whereInsert.appendChild(elems);
 }
 
 function clearNode (node) {

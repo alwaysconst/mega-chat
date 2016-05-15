@@ -1,3 +1,5 @@
+@import url('normalize.css');
+
 html, body, div, span, applet, object, iframe,
 h1, h2, h3, h4, h5, h6, p, blockquote, pre,
 a, abbr, acronym, address, big, cite, code,
@@ -19,29 +21,13 @@ ol, ul {
     list-style: none;
 }
 
-blockquote, q {
-    quotes: none;
-}
-
 :focus {
     outline: 0;
-}
-
-ins {
-    text-decoration: none;
-}
-
-del {
-    text-decoration: line-through;
 }
 
 table {
     border-collapse: collapse;
     border-spacing: 0;
-}
-
-header, nav, section, article, aside, footer {
-    display: block;
 }
 
 html {
@@ -82,28 +68,28 @@ h2 {
     font-size: 21px;
     line-height: 22px;
     margin-bottom: 28px;
-    font-weight: 500;
+    font-weight: 600;
 }
 
-.gl-block {
+.container {
     height: 100%;
 }
 
-.gl-block > .table-cell {
+.container > .table-cell {
     vertical-align: top;
 }
 
-.gl-block > .table-cell:first-child {
+.container > .table-cell:first-child {
     width: 20%;
 }
 
-.gl-block > .table-cell:nth-child(2) {
+.container > .table-cell:nth-child(2) {
     width: 80%;
     padding: 20px;
     vertical-align: bottom;
 }
 
-.gl-block > .table-cell:first-child {
+.container > .table-cell:first-child {
     background: #fb825c;
     color: #fff;
     padding: 20px 0 0 10px;
@@ -116,7 +102,7 @@ h2 {
 .login .table-cell:last-child {
     font-size: 21px;
     line-height: 22px;
-    font-weight: 500;
+    font-weight: 600;
 }
 
 .login img {
@@ -127,8 +113,8 @@ h2 {
     padding-bottom: 30px;
 }
 
-.menu > li div {
-    font-weight: 500;
+.menu li div {
+    font-weight: 600;
     margin-bottom: 9px;
     text-transform: uppercase;
 }
@@ -142,7 +128,7 @@ h2 {
     margin-left: 18px;
 }
 
-#people {
+#comments {
     min-height: 0;
     max-height: 90%;
     /*top:0;*/
@@ -152,25 +138,25 @@ h2 {
     vertical-align: bottom;
 }
 
-.people {
+.comment {
     margin-bottom: 30px;
 }
 
-.people .table .table-cell:first-child {
+.comment .table .table-cell:first-child {
     width: 80px;
 }
 
-.people .table .table-cell:last-child div:first-child b {
+.comment .table .table-cell:last-child div:first-child b {
     color: #4f4f4f;
 
 }
 
-.people .table .table-cell:last-child div:first-child span {
+.comment .table .table-cell:last-child div:first-child span {
     color: #888;
     padding-left: 10px;
 }
 
-.people .table .table-cell:last-child div:last-child {
+.comment .table .table-cell:last-child div:last-child {
     line-height: 22px;
     padding-top: 12px;
 }
@@ -202,7 +188,7 @@ h2 {
     float: right;
 }
 
-.gl-block > .table-cell:last-child .menu li ul li {
+.container > .table-cell:last-child .menu li ul li {
     color: #828282;
 }
 
@@ -325,8 +311,8 @@ h2 {
     margin: 0 auto;
     text-align: center;
     line-height: 200px;
-    color: #808080;
-
+    color: #FFFFFF;
+    text-shadow: 0 0 10px #000;
     background-position: center;
     background-repeat: no-repeat;
     background-size: 100%;
@@ -335,54 +321,6 @@ h2 {
 .hide {
     display: none;
 }
-
-/*.blur {*/
-    /*-webkit-animation: blur 0.5s linear forwards;*/
-    /*-moz-animation: blur 0.5s linear forwards;*/
-    /*-ms-animation: blur 0.5s linear forwards;*/
-    /*-o-animation: blur 0.5s linear forwards;*/
-    /*animation: blur 0.5s linear forwards;*/
-/*}*/
-
-/*@-webkit-keyframes blur {*/
-    /*to {*/
-        /*-webkit-filter: blur(2px);*/
-        /*filter: blur(2px);*/
-    /*}*/
-/*}*/
-
-/*@-moz-keyframes blur {*/
-    /*to {*/
-        /*-moz-filter: blur(2px);*/
-        /*filter: blur(2px);*/
-    /*}*/
-/*}*/
-
-/*@keyframes blur {*/
-    /*to {*/
-        /*-webkit-filter: blur(2px);*/
-        /*-moz-filter: blur(2px);*/
-        /*filter: blur(2px);*/
-    /*}*/
-/*}*/
-
-/*.anim {*/
-    /*-webkit-transition: all 500ms cubic-bezier(0.680, 0, 0.265, 1); !* older webkit *!*/
-    /*-webkit-transition: all 500ms cubic-bezier(0.680, -0.550, 0.265, 1.550);*/
-    /*-moz-transition: all 500ms cubic-bezier(0.680, -0.550, 0.265, 1.550);*/
-    /*-o-transition: all 500ms cubic-bezier(0.680, -0.550, 0.265, 1.550);*/
-    /*transition: all 500ms cubic-bezier(0.680, -0.550, 0.265, 1.550); !* easeInOutBack *!*/
-
-    /*-webkit-transition-timing-function: cubic-bezier(0.680, 0, 0.265, 1); !* older webkit *!*/
-    /*-webkit-transition-timing-function: cubic-bezier(0.680, -0.550, 0.265, 1.550);*/
-    /*-moz-transition-timing-function: cubic-bezier(0.680, -0.550, 0.265, 1.550);*/
-    /*-o-transition-timing-function: cubic-bezier(0.680, -0.550, 0.265, 1.550);*/
-    /*transition-timing-function: cubic-bezier(0.680, -0.550, 0.265, 1.550); !* easeInOutBack *!*/
-/*}*/
-
-/*.top0 {*/
-    /*top: 0 !important;*/
-/*}*/
 
 #loginWindow, #uploadWindow {
     top: 0;
