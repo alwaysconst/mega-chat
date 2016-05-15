@@ -157,11 +157,10 @@ function myPhotoFn (e) {
     view (uploadWindowTemplate, windowContainer);
     windowContainer.classList.toggle("hide");
 
-    var uploadArea = document.getElementById("photoUpload"),
-        avatar = 'http://' + host + '/photos/' + login + '?' + Date.now();
+    var uploadArea = document.getElementById("photoUpload");
     photo = null;
 
-    photoUpload.style.backgroundImage = 'url(' + avatar + ')';
+    photoUpload.style.backgroundImage = 'url(' + 'http://' + host + '/photos/' + login + '?' + Date.now() + ')';
 
     uploadArea.ondragover = function (e) {
         e.preventDefault();
