@@ -28,44 +28,41 @@ document.addEventListener('click', function (e) {
 });
 
 function connect(op, data, token) {
-    new Promise(function (resolve) {
-        ws = new WebSocket('ws://' + host);
-        resolve (ws);
-    }).then(function(ws) {
-        ws.onopen = function() {
-            send(op, data, token)
-        };
-        ws.onerror = function(e) {
-            console.log(e);
-        };
-        ws.onclose = function(e) {
-            console.log(e);
-        };
-        ws.onmessage = function(e) {
-            var message = JSON.parse(e.data);
+    ws = new WebSocket('ws://' + host);
 
-            switch(message.op) {
-                case 'token':
-                    regMs(message, data);
-                    break;
-                case 'error':
-                    errorMs(message);
-                    break;
-                case 'user-enter':
-                    userEnterMs(message);
-                    break;
-                case 'user-out':
-                    userOutMs(message);
-                    break;
-                case 'message':
-                    newMessageMs(message);
-                    break;
-                case 'user-change-photo':
-                    userChangePhotoMs(message);
-                    break;
-            }
-        };
-    })
+    ws.onopen = function() {
+        send(op, data, token)
+    };
+    ws.onerror = function(e) {
+        console.log(e);
+    };
+    ws.onclose = function(e) {
+        console.log(e);
+    };
+    ws.onmessage = function(e) {
+        var message = JSON.parse(e.data);
+
+        switch(message.op) {
+            case 'token':
+                regMs(message, data);
+                break;
+            case 'error':
+                errorMs(message);
+                break;
+            case 'user-enter':
+                userEnterMs(message);
+                break;
+            case 'user-out':
+                userOutMs(message);
+                break;
+            case 'message':
+                newMessageMs(message);
+                break;
+            case 'user-change-photo':
+                userChangePhotoMs(message);
+                break;
+        }
+    };
 }
 
 function send(op, data, token) {
@@ -89,9 +86,9 @@ function regMs (message, data) {
         item.time = time(item.time);
         view (messageTemplate, comments, item);
     });
-    comments.scrollTop = 9999;
+    comments.scrollTop = comments.scrollHeight;
 
-    return token = message.token;
+    token = message.token;
 }
 
 function errorMs (message) {
@@ -140,17 +137,17 @@ function loginButtonFn (e) {
     var name = fioField.value.trim();
     login = nickField.value.trim();
     connect('reg', {name: name, login: login});
-    return evTarget = e.target;
+    evTarget = e.target;
 }
 
 function sendButtonFn (e) {
     var messageText = document.getElementById('messageText').value.trim();
-    if (messageText > null) {
+    if (messageText) {
         document.getElementById('messageText').value = '';
         e.target.parentNode.querySelector('.error-block').innerText = '';
     }
     send('message', {body: messageText}, token);
-    return evTarget = e.target;
+    evTarget = e.target;
 }
 
 function myPhotoFn (e) {
@@ -212,7 +209,7 @@ function uploadButtonFn (e) {
         windowContainer.classList.toggle("hide");
         clearNode(windowContainer);
     }
-    return evTarget = e.target;
+    evTarget = e.target;
 }
 
 function readFile (file) {
@@ -235,11 +232,8 @@ function time (date) {
 function view(whatCompile, whereInsert, data) {
     var source = whatCompile.innerHTML,
         templateFn = Handlebars.compile(source),
-        template = templateFn(data),
-        parser = new DOMParser(),
-        dom = parser.parseFromString(template, "text/html"),
-        elems = dom.querySelector('body').firstElementChild;
-    whereInsert.appendChild(elems);
+        template = templateFn(data);
+    whereInsert.insertAdjacentHTML("beforeEnd", template);
 }
 
 function clearNode (node) {
