@@ -2,7 +2,7 @@
 
 This is a simple chat server, which is enough to communicate with friends.
 
-Before start you need **download** chat:
+Before start you need **download** the chat:
 ```
 git clone https://github.com/most-effect/mega-chat.git
 ```
